@@ -34,7 +34,7 @@ class document(object):
             os.remove(f"{dir_name}/{base_name}.log")
         os.remove(tex_file)
 
-sample=document("dev/test", "Maths test 1(12 marks)", False)
+sample=document("dev/latex/test", "Maths test 1(12 marks)", False)
 sample.add(r"\section{Section 1(4 marks)}")
 sample.add(r"Hello. This is a test line")
 sample.add(r"\vspace{1em}")

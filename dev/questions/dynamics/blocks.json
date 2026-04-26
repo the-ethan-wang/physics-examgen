@@ -1,0 +1,32 @@
+{
+    "has": {
+        "has_question": true,
+        "has_question_parts": true,
+        "has_answer": false,
+        "has_answer_parts": true,
+        "has_diagram_data": true
+    },
+    "question": "The diagram shows 4 blocks in contact on a smooth surface. A 32N force acts on block 1 from the left, and the surface can be considered frictionless. Calculate:",
+    "question_parts": [
+        "The acceleration of the system",
+        "The acceleration of each block",
+        "The net force on each block",
+        "The contact forces for each block"
+    ],
+    "diagram_data": {
+        "weights": [
+            1,
+            20,
+            3,
+            8
+        ],
+        "net_force": 32
+    },
+    "answer": null,
+    "answer_parts": [
+        "The acceleration of the system is 1ms^-2",
+        "Each block has an acceleration of 1ms^-2",
+        "Block 1 has a net force of 1N\nBlock 2 has a net force of 20N\nBlock 3 has a net force of 3N\nBlock 4 has a net force of 8N",
+        "Block 1 has 2 forces acting on it. They are: 32N Applied force, -31N Contact Reaction force\nBlock 2 has 2 forces acting on it. They are: 31N Contact force, -11N Contact Reaction force\nBlock 3 has 2 forces acting on it. They are: 11N Contact force, -8N Contact Reaction force\nBlock 4 has 1 force acting on it. They are: 8N Contact force"
+    ]
+}
