@@ -4,7 +4,7 @@ def base_document(title="", author="Ethan Wang"):
     header=r"""
     \documentclass{article}
     \usepackage{amsmath,eso-pic,indentfirst,enumitem}
-    \begin{document}""" + r"\title{" + title + r"}\author{" + author + r"""}
+    \begin{document}""" + r"\title{\vspace{-2cm}" + title + r"}\author{" + author + r"""}
     \date{\today}
     \maketitle"""
     footer=r"\end{document}"
@@ -37,8 +37,7 @@ class document(object):
 sample=document("dev/latex/test", "Dynamics test(12 marks)")
 sample.add(r"\section{Blocks(12 marks)}")
 sample.add(r"\subsection{Question 1(4 marks)}")
-sample.add(r"The diagram shows two blocks in contact on a smooth surface. A 48N force acts on block 1, and the surface can be considered frictionless. Calculate:")
-sample.add(r"\vspace{1em}")
+sample.add(r"The diagram shows 2 blocks in contact on a smooth surface. A 48N force acts on block 1, and the surface can be considered frictionless. Calculate:")
 sample.add(r"\begin{enumerate}[label=(\alph*)]")
 sample.add(r"\item The acceleration of the system")
 sample.add(r"\item The acceleration of each block")

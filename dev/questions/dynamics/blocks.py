@@ -43,24 +43,24 @@ def generate_block_q():
 
     marks = 6
     mark_distribution = [1, 1, 2, 2]
-    acceleration_answer = "The acceleration of the system is {0}ms^-2".format(system_acceleration)
-    each_acc_answer = "Each block has an acceleration of {0}ms^-2".format(system_acceleration)
+    acceleration_answer = f"The acceleration of the system is ${system_acceleration}\\,\\mathrm{{m s^{{-2}}}}$"
+    each_acc_answer = f"Each block has an acceleration of ${system_acceleration}\\,\\mathrm{{m s^{{-2}}}}$"
     each_block_nf_base = "Block {0} has a net force of {1}N"
     each_block_net_force_answer = []
     for i, nf in enumerate(net_forces):
         this_block_ans = each_block_nf_base.format(i+1, nf)
         each_block_net_force_answer.append(this_block_ans)
-    each_block_net_force_answer = "\n".join(each_block_net_force_answer)
+    each_block_net_force_answer = "\n\n".join(each_block_net_force_answer)
     forces = block_forces(weights, net_force, system_acceleration)
     assert forces
     forces = forces["forces"]
-    each_block_f_base = "{0} has {1} force{2} acting on it. They are: {3}"
+    each_block_f_base = "{0} has {1} force{2} acting on it. They are: \n\n{3}"
     each_force_base = "{0}N {1}"
     each_block_forces_answer = []
     for force in forces:
         block_ans = each_block_f_base.format(force["name"], len(force["forces"]), "s" if len(force["forces"])!=1 else "", ", ".join([each_force_base.format(x[1],x[0]) for x in force["forces"]]))
         each_block_forces_answer.append(block_ans)
-    each_block_forces_answer="\n".join(each_block_forces_answer)
+    each_block_forces_answer="\n\n".join(each_block_forces_answer)
     question_data = {
         "marks": marks,
         "mark_distribution": mark_distribution,
@@ -125,30 +125,26 @@ def block_forces(weights: list[Union[float,int]], net_force: Optional[Union[floa
         }
         if i==0:
             if net_force>=0:
-                obj_data["forces"].append(["Applied", net_force])
-                if n>1:
-                    obj_data["forces"].append([f"Contact force (from Block {i+2})", -contacts[0]])
+                obj_data["forces"].append(["Applied Force", net_force])
+                obj_data["forces"].append([f"Contact Force from block {i+2}", obj_net_force-net_force])
             else:
-                if n>1:
-                    obj_data["forces"].append([f"Contact force (from Block {i+2})", obj_net_force])
+                obj_data["forces"].append([f"Contact Force from block {i+2}", obj_net_force])
         elif i==n-1:
             if net_force<0:
-                obj_data["forces"].append(["Applied", net_force])
-                obj_data["forces"].append([f"Contact force (from Block {i})", -contacts[i-1]])
+                obj_data["forces"].append(["Applied Force", net_force])
+                obj_data["forces"].append([f"Contact Force from block {i}", obj_net_force-net_force])
             else:
-                obj_data["forces"].append([f"Contact force (from Block {i})", contacts[i-1]])
+                obj_data["forces"].append([f"Contact Force from block {i}", obj_net_force])
         else:
-            left_contact=contacts[i-1]
-            right_contact=contacts[i]
-            obj_data["forces"].append([f"Contact force (from Block {i})", left_contact])
-            obj_data["forces"].append([f"Contact force (from Block {i+2})", -right_contact])
-        ans["forces"].append(obj_data)
+            obj_data["forces"].append([f"Contact Force from block {i}", -1*ans['forces'][i-1]['forces'][-1][1]]) # FIXME: HACK:
+            obj_data["forces"].append([f"Contact Force from block {i+2}", obj_net_force-obj_data['forces'][0][1]])
+        ans['forces'].append(obj_data)
     print(contacts)
     return ans
 
-
-a = generate_block_q()
-print(a)
-datapath = os.path.join(Path(__file__).resolve().parent, "blocks.json")
-with open(datapath, "w") as f:
-    json.dump(a, f, indent=4)
+if __name__ == "__main__":
+    a = generate_block_q()
+    print(a)
+    datapath = os.path.join(Path(__file__).resolve().parent, "blocks.json")
+    with open(datapath, "w") as f:
+        json.dump(a, f, indent=4)

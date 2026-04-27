@@ -6,7 +6,7 @@
         2,
         2
     ],
-    "question": "The diagram shows 3 blocks in contact on a smooth surface. A 162N force acts on block 1 from the left, and the surface can be considered frictionless. Calculate:",
+    "question": "The diagram shows 3 blocks in contact on a smooth surface. A 230N force acts on block 1 from the left, and the surface can be considered frictionless. Calculate:",
     "question_parts": [
         "The acceleration of the system",
         "The acceleration of each block",
@@ -15,17 +15,17 @@
     ],
     "diagram_data": {
         "weights": [
-            9,
-            3,
-            6
+            7,
+            7,
+            9
         ],
-        "net_force": 162
+        "net_force": 230
     },
     "answer": null,
     "answer_parts": [
-        "The acceleration of the system is 9ms^-2",
-        "Each block has an acceleration of 9ms^-2",
-        "Block 1 has a net force of 81N\nBlock 2 has a net force of 27N\nBlock 3 has a net force of 54N",
-        "Block 1 has 2 forces acting on it. They are: 162N Applied force, -81N Contact (from Block 2) force\nBlock 2 has 2 forces acting on it. They are: 81N Contact (from Block 1) force, -54N Contact (from Block 3) force\nBlock 3 has 1 force acting on it. They are: 54N Contact (from Block 2) force"
+        "The acceleration of the system is $10\\,\\mathrm{m s^{-2}}$",
+        "Each block has an acceleration of $10\\,\\mathrm{m s^{-2}}$",
+        "Block 1 has a net force of 70N\nBlock 2 has a net force of 70N\nBlock 3 has a net force of 90N",
+        "Block 1 has 2 forces acting on it. They are: 230N Applied, -160N Contact Force from block 0\nBlock 2 has 2 forces acting on it. They are: 160N Contact, -90N Contact Reaction\nBlock 3 has 1 force acting on it. They are: 90N Contact Force from block 2"
     ]
 }
