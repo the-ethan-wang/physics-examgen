@@ -1,9 +1,10 @@
 from pathlib import Path
+from typing import Optional, Union
 import os
 import json
-
-from typing import Optional, Union
 import random
+
+from latex_classes import Question
 
 NICE_MEDIUM_NUMBERS = list(range(1,11))+[12, 15, 16, 18, 20, 24, 25]
 NICE_LARGE_NUMBERS = [67, 676767677, 2**16-1, 2**31-1, 314159265358979323846264338327950]
@@ -20,34 +21,28 @@ def get_nice(size="S"):
             return get_nice()
 
 def generate_block_tikz(diagram_data):
-    weights = diagram_data["weights"]
-    net_force = diagram_data["net_force"]
-    block_height = 2.0
-    scale_factor = 0.05
-    tikz_code = [r"\begin{tikzpicture}[scale=0.8, every node/.style={transform shape}]"]
-    total_width = sum(weights) * scale_factor + 2*len(weights)
-    tikz_code.append(rf"\draw[thick] (-1,0) -- ({total_width + 1},0);")
-    current_x = 0
+    weights=diagram_data["weights"]
+    net_force=diagram_data["net_force"]
+    height=2.0
+    scale=0.05
+    tikz=[r"\begin{tikzpicture}[scale=0.8, every node/.style={transform shape}]"]
+    total_width = sum(weights) * scale + 2*len(weights)
+    tikz.append(fr"\draw[thick] (-1,0) -- ({total_width + 1},0);")
+    current_x=0
     for i, w in enumerate(weights):
-        width = w * scale_factor + 2
-        tikz_code.append(
-            rf"\draw[thick, fill=gray!10] ({current_x},0) rectangle ({current_x + width},{block_height}) "
-            rf"node[pos=.5] {{$m_{i+1}={w}\text{{kg}}$}};"
-        )
-        current_x += width
-    arrow_len = 1.5
-    if net_force > 0:
-        tikz_code.append(
-            rf"\draw[-stealth, line width=1.5pt, blue] ({-arrow_len}, {block_height/2}) -- (0, {block_height/2}) "
-            rf"node[midway, above] {{${abs(net_force)}\text{{N}}$}};"
-        )
+        width = w*scale+2
+        tikz.append(fr"\draw[thick, fill=gray!10] ({current_x},0) rectangle ({current_x + width},{height})")
+        tikz.append(fr"node[pos=.5] {{$m_{i+1}={w}\text{{kg}}$}};")
+        current_x+=width
+    arrow_len=1.5
+    if net_force>0:
+        tikz.append(fr"\draw[-stealth, line width=1.5pt, blue] ({-arrow_len}, {height/2}) -- (0, {height/2})")
+        tikz.append(fr"node[midway, above] {{${abs(net_force)}\text{{N}}$}};")
     else:
-        tikz_code.append(
-            rf"\draw[stealth-, line width=1.5pt, blue] ({total_width}, {block_height/2}) -- ({total_width + arrow_len}, {block_height/2}) "
-            rf"node[midway, above] {{${abs(net_force)}\text{{N}}$}};"
-        )
-    tikz_code.append(r"\end{tikzpicture}")
-    return "\n".join(tikz_code)
+        tikz.append(fr"\draw[stealth-, line width=1.5pt, blue] ({total_width}, {height/2}) -- ({total_width + arrow_len}, {height/2})")
+        tikz.append(fr"node[midway, above] {{${abs(net_force)}\text{{N}}$}};")
+    tikz.append(r"\end{tikzpicture}")
+    return "\n".join(tikz)
 
 def generate_block_q():
     question_base = "The diagram shows {0} blocks in contact on a smooth surface. A {1}N force acts on block {2} from the {3}, and the surface can be considered frictionless. Calculate:"
@@ -73,22 +68,24 @@ def generate_block_q():
 
     marks = 6
     mark_distribution = [1, 1, 2, 2]
-    acceleration_answer = f"The acceleration of the system is ${system_acceleration}\\,\\mathrm{{m s^{{-2}}}}$"
-    each_acc_answer = f"Each block has an acceleration of ${system_acceleration}\\,\\mathrm{{m s^{{-2}}}}$"
-    each_block_nf_base = "Block {0} has a net force of {1}N"
+    direction_acceleration = "right" if system_acceleration>0 else "left"
+    acceleration_answer = f"The acceleration of the system is ${abs(system_acceleration)}\\,\\mathrm{{m s^{{-2}}}}$ {direction_acceleration}"
+    each_acc_answer = f"Each block has an acceleration of ${abs(system_acceleration)}\\,\\mathrm{{m s^{{-2}}}}$ {direction_acceleration}"
+    each_block_nf_base = "Block {0} has a net force of {1}N {2}"
     each_block_net_force_answer = []
     for i, nf in enumerate(net_forces):
-        this_block_ans = each_block_nf_base.format(i+1, nf)
+        direction = "right" if nf>0 else "left"
+        this_block_ans = each_block_nf_base.format(i+1, abs(nf), direction)
         each_block_net_force_answer.append(this_block_ans)
     each_block_net_force_answer = "\n\n".join(each_block_net_force_answer)
     forces = block_forces(weights, net_force, system_acceleration)
     assert forces
     forces = forces["forces"]
     each_block_f_base = "{0} has {1} force{2} acting on it. They are: \n\n{3}"
-    each_force_base = "{0}N {1}"
+    each_force_base = "{0}N {1} {2}"
     each_block_forces_answer = []
     for force in forces:
-        block_ans = each_block_f_base.format(force["name"], len(force["forces"]), "s" if len(force["forces"])!=1 else "", ", ".join([each_force_base.format(x[1],x[0]) for x in force["forces"]]))
+        block_ans = each_block_f_base.format(force["name"], len(force["forces"]), "s" if len(force["forces"])!=1 else "", ", ".join([each_force_base.format(abs(x[1]),"right" if x[1]>0 else "left",x[0]) for x in force["forces"]]))
         each_block_forces_answer.append(block_ans)
     each_block_forces_answer="\n\n".join(each_block_forces_answer)
     question_data = {
@@ -114,18 +111,14 @@ def generate_block_q():
     return question_data
 
 def block_forces(weights: list[Union[float,int]], net_force: Optional[Union[float,int]], net_acceleration: Optional[Union[float,int]]):
-    """Returns list of every force acting on each object. Assumes force is applied to the side of the weights."""
+    if len(weights)<1:
+        print("Must include at least 1 block.")
+        return
     for weight in weights:
         if weight<0:
             print("Weights must be non-negative.")
             return
-        
-    if len(weights)<1:
-        print("Must include at least 1 block.")
-        return
-
     total_mass=sum(weights)
-
     if net_acceleration is not None and net_force is not None:
         if net_force!=net_acceleration*total_mass:
             print("Net force conflicts with net acceleration")
@@ -156,22 +149,32 @@ def block_forces(weights: list[Union[float,int]], net_force: Optional[Union[floa
         }
         if i==0:
             if net_force>=0:
-                obj_data["forces"].append(["Applied Force", net_force])
-                obj_data["forces"].append([f"Contact Force from block {i+2}", obj_net_force-net_force])
+                obj_data["forces"].append(["Applied force", net_force])
+                obj_data["forces"].append([f"Contact force from block {i+2}", obj_net_force-net_force])
             else:
-                obj_data["forces"].append([f"Contact Force from block {i+2}", obj_net_force])
+                obj_data["forces"].append([f"Contact force from block {i+2}", obj_net_force])
         elif i==n-1:
             if net_force<0:
-                obj_data["forces"].append(["Applied Force", net_force])
-                obj_data["forces"].append([f"Contact Force from block {i}", obj_net_force-net_force])
+                obj_data["forces"].append(["Applied force", net_force])
+                obj_data["forces"].append([f"Contact force from block {i}", obj_net_force-net_force])
             else:
-                obj_data["forces"].append([f"Contact Force from block {i}", obj_net_force])
+                obj_data["forces"].append([f"Contact force from block {i}", obj_net_force])
         else:
-            obj_data["forces"].append([f"Contact Force from block {i}", -1*ans['forces'][i-1]['forces'][-1][1]]) # FIXME: HACK:
-            obj_data["forces"].append([f"Contact Force from block {i+2}", obj_net_force-obj_data['forces'][0][1]])
+            obj_data["forces"].append([f"Contact force from block {i}", -1*ans['forces'][i-1]['forces'][-1][1]]) # FIXME: HACK:
+            obj_data["forces"].append([f"Contact force from block {i+2}", obj_net_force-obj_data['forces'][0][1]])
         ans['forces'].append(obj_data)
     print(contacts)
     return ans
+
+def get_block_question() -> Question:
+    qd = generate_block_q()
+    q = Question(
+        prompt=qd["question"]+"\n\n"+qd["diagram_data"]["tikz"],
+        parts=qd["question_parts"],
+        marks=qd["marks"],
+        answers=qd["answer_parts"]
+    )
+    return q
 
 if __name__ == "__main__":
     a = generate_block_q()

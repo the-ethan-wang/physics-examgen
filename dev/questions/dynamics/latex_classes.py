@@ -1,4 +1,5 @@
 import os
+from typing import Callable
 
 def base_document(title="", author="Ethan Wang"):
     header=r"""
@@ -42,6 +43,10 @@ class Section:
 
     def add_question(self, q):
         self.questions.append(q)
+
+    def add_questions(self, gen: Callable, count):
+        for _ in range(count):
+            self.questions.append(gen())
 
     def to_latex(self, show_answers=False):
         out = [rf"\section*{{{self.title}}}"]
