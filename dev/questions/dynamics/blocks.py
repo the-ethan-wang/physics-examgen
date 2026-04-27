@@ -19,6 +19,36 @@ def get_nice(size="S"):
         case _:
             return get_nice()
 
+def generate_block_tikz(diagram_data):
+    weights = diagram_data["weights"]
+    net_force = diagram_data["net_force"]
+    block_height = 2.0
+    scale_factor = 0.05
+    tikz_code = [r"\begin{tikzpicture}[scale=0.8, every node/.style={transform shape}]"]
+    total_width = sum(weights) * scale_factor + 2*len(weights)
+    tikz_code.append(rf"\draw[thick] (-1,0) -- ({total_width + 1},0);")
+    current_x = 0
+    for i, w in enumerate(weights):
+        width = w * scale_factor + 2
+        tikz_code.append(
+            rf"\draw[thick, fill=gray!10] ({current_x},0) rectangle ({current_x + width},{block_height}) "
+            rf"node[pos=.5] {{$m_{i+1}={w}\text{{kg}}$}};"
+        )
+        current_x += width
+    arrow_len = 1.5
+    if net_force > 0:
+        tikz_code.append(
+            rf"\draw[-stealth, line width=1.5pt, blue] ({-arrow_len}, {block_height/2}) -- (0, {block_height/2}) "
+            rf"node[midway, above] {{${abs(net_force)}\text{{N}}$}};"
+        )
+    else:
+        tikz_code.append(
+            rf"\draw[stealth-, line width=1.5pt, blue] ({total_width}, {block_height/2}) -- ({total_width + arrow_len}, {block_height/2}) "
+            rf"node[midway, above] {{${abs(net_force)}\text{{N}}$}};"
+        )
+    tikz_code.append(r"\end{tikzpicture}")
+    return "\n".join(tikz_code)
+
 def generate_block_q():
     question_base = "The diagram shows {0} blocks in contact on a smooth surface. A {1}N force acts on block {2} from the {3}, and the surface can be considered frictionless. Calculate:"
     question_parts = [
@@ -69,7 +99,8 @@ def generate_block_q():
         "question_parts": question_parts,
         "diagram_data": { # TODO: Include a function for drawing the diagram in here, so the main class can call qd["diagram_data"]["generator"](qd["diagram_data"])
             "weights": weights,
-            "net_force": net_force
+            "net_force": net_force,
+            "tikz": generate_block_tikz({"weights": weights, "net_force": net_force})
         },
         
         "answer": None,

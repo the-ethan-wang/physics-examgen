@@ -4,7 +4,7 @@ def base_document(title="", author="Ethan Wang"):
     header=r"""
     \documentclass[addpoints]{exam}
     \printanswers
-    \usepackage{amsmath,eso-pic,indentfirst,enumitem}
+    \usepackage{amsmath,eso-pic,indentfirst,enumitem,tikz,multicol}
     """ + r"\title{\vspace{-2cm}" + title + r"}\author{" + author + r"""}
     \date{\today}
     \begin{document}

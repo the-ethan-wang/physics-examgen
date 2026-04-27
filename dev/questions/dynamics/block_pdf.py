@@ -9,7 +9,7 @@ sec = Section("Blocks")
 for _ in range(10):
     qd = generate_block_q()
     q = Question(
-        prompt=qd["question"],
+        prompt=qd["question"]+"\n\n"+qd["diagram_data"]["tikz"],
         parts=qd["question_parts"],
         marks=qd["marks"],
         answers=qd["answer_parts"]
