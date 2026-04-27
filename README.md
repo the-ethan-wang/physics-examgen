@@ -9,6 +9,8 @@ First project for Horizons Hack Club.
 Still experimenting. Sample dynamics exercise questions in `dev\questions\dynamics\block_exam.pdf`, answers in `dev\questions\dynamics\block_exam_answers.pdf`  
 [here](dev/questions/dynamics/block_exam.pdf)
 
+![sample image](image.png)
+
 ## Notes
 
 - [latex exam document class](https://math.mit.edu/~psh/exam/examdoc.pdf)
