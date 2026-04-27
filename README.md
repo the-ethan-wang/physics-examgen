@@ -7,7 +7,7 @@ First project for Horizons Hack Club.
 ## Progress
 
 Still experimenting. Sample dynamics exercise questions in `dev\questions\dynamics\block_exam.pdf`, answers in `dev\questions\dynamics\block_exam_answers.pdf`  
-[here](dev\questions\dynamics\block_exam.pdf)
+[here](dev/questions/dynamics/block_exam.pdf)
 
 ## Notes
 
