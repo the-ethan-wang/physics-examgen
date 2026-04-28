@@ -82,7 +82,7 @@ def generate_block_q():
     assert forces
     forces = forces["forces"]
     each_block_f_base = "{0} has {1} force{2} acting on it. They are: \n\n{3}"
-    each_force_base = "{0}N {1} {2}"
+    each_force_base = "{0}N {1} ({2})"
     each_block_forces_answer = []
     for force in forces:
         block_ans = each_block_f_base.format(force["name"], len(force["forces"]), "s" if len(force["forces"])!=1 else "", ", ".join([each_force_base.format(abs(x[1]),"right" if x[1]>0 else "left",x[0]) for x in force["forces"]]))
@@ -94,7 +94,7 @@ def generate_block_q():
 
         "question": filled_question,
         "question_parts": question_parts,
-        "diagram_data": { # TODO: Include a function for drawing the diagram in here, so the main class can call qd["diagram_data"]["generator"](qd["diagram_data"])
+        "diagram_data": {
             "weights": weights,
             "net_force": net_force,
             "tikz": generate_block_tikz({"weights": weights, "net_force": net_force})
@@ -149,21 +149,20 @@ def block_forces(weights: list[Union[float,int]], net_force: Optional[Union[floa
         }
         if i==0:
             if net_force>=0:
-                obj_data["forces"].append(["Applied force", net_force])
-                obj_data["forces"].append([f"Contact force from block {i+2}", obj_net_force-net_force])
+                obj_data["forces"].append(["applied force", net_force])
+                obj_data["forces"].append([f"contact force from block {i+2}", obj_net_force-net_force])
             else:
-                obj_data["forces"].append([f"Contact force from block {i+2}", obj_net_force])
+                obj_data["forces"].append([f"contact force from block {i+2}", obj_net_force])
         elif i==n-1:
             if net_force<0:
-                obj_data["forces"].append(["Applied force", net_force])
-                obj_data["forces"].append([f"Contact force from block {i}", obj_net_force-net_force])
+                obj_data["forces"].append(["applied force", net_force])
+                obj_data["forces"].append([f"contact force from block {i}", obj_net_force-net_force])
             else:
-                obj_data["forces"].append([f"Contact force from block {i}", obj_net_force])
+                obj_data["forces"].append([f"contact force from block {i}", obj_net_force])
         else:
-            obj_data["forces"].append([f"Contact force from block {i}", -1*ans['forces'][i-1]['forces'][-1][1]]) # FIXME: HACK:
-            obj_data["forces"].append([f"Contact force from block {i+2}", obj_net_force-obj_data['forces'][0][1]])
+            obj_data["forces"].append([f"contact force from block {i}", -1*ans['forces'][i-1]['forces'][-1][1]]) # FIXME: HACK:
+            obj_data["forces"].append([f"contact force from block {i+2}", obj_net_force-obj_data['forces'][0][1]])
         ans['forces'].append(obj_data)
-    print(contacts)
     return ans
 
 def get_block_question() -> Question:

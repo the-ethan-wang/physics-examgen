@@ -5,7 +5,6 @@ from latex_classes import Section, document
 random.seed(1)
 
 sec = Section("Blocks")
-
 sec.add_questions(get_block_question, 10)
 
 doc = document("dev/questions/dynamics/block_exam", "Dynamics Test")
