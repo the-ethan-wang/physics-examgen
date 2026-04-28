@@ -4,7 +4,7 @@ from latex_classes import Section, document
 
 random.seed(1)
 
-sec = Section("Riverboat")
+sec = Section("Ferry travelling across a river")
 sec.add_questions(get_river_question, 10)
 
 doc = document("dev/questions/kinematics/river_exam", "River Test")

@@ -71,6 +71,42 @@ def generate_river_q():
 
     filled_question = question_base.format(*[river_width, ferry_velocity, abs(water_velocity), "up" if water_velocity>0 else "down"])
 
+    answer_data = solve_river(river_width, water_velocity, ferry_velocity)
+
+    resultant_velocity_template = "The resultant velocity of the ferry is ${0}\\,\\mathrm{{m s^{{-1}}}}$ at {1}{2}E"
+
+    resultant_velocity_magnitude = answer_data["resultant_velocity_magnitude"]
+    resultant_velocity_angle = answer_data["resultant_velocity_angle"]
+
+    if resultant_velocity_angle < 0:
+        first_dir = "S"
+        resultant_velocity_angle = abs(resultant_velocity_angle)
+    else:
+        first_dir = "N"
+    from_nw = 90 - resultant_velocity_angle
+
+    filled_in_resultant_velocity = resultant_velocity_template.format(round(resultant_velocity_magnitude, 2), first_dir, round(from_nw, 2))
+    
+    time_taken_template = "The time taken to cross the river is {0}s"
+
+    time_taken = answer_data["time_taken"]
+
+    filled_in_time_taken = time_taken_template.format(round(time_taken, 2))
+
+    displacement_template = "The displacement of the ferry is {0}m at {1}{2}E"
+
+    displacement_magnitude = answer_data["displacement_magnitude"]
+
+    filled_in_displacement = displacement_template.format(round(displacement_magnitude, 2), first_dir, round(from_nw, 2))
+
+    vertical_displacement_template = "The vertical displacement of the ferry is {0}m {1}"
+
+    vertical_displacement = answer_data["vertical_displacement"]
+
+    vertical_displacement_direction = "North" if vertical_displacement>0 else "South"
+
+    filled_in_vertical_displacement = vertical_displacement_template.format(round(vertical_displacement, 2), vertical_displacement_direction)
+
     marks = 4
     mark_distribution = [1, 1, 1, 1]
     question_data = {
@@ -88,7 +124,10 @@ def generate_river_q():
         
         "answer": None,
         "answer_parts": [
-
+            filled_in_resultant_velocity,
+            filled_in_time_taken,
+            filled_in_displacement,
+            filled_in_vertical_displacement
         ]
     }
     return question_data
@@ -104,5 +143,10 @@ def solve_river(river_width, water_velocity, ferry_velocity):
     displacement_angle = resultant_velocity_angle
 
     return {
-        "resultant_velocity_mag"
+        "resultant_velocity_magnitude": resultant_velocity_magnitude,
+        "resultant_velocity_angle": resultant_velocity_angle,
+        "time_taken": time_taken,
+        "displacement_magnitude": displacement_magnitude,
+        "displacement_angle": displacement_angle,
+        "vertical_displacement": vertical_displacement
     }
