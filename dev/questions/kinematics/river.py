@@ -74,7 +74,7 @@ def generate_straight_boat_q() -> dict:
         "The time taken to cross the river"
     ]
     water_velocity = get_nice("S") * random.choice([-1, 1])
-    ferry_velocity = get_nice("M")
+    ferry_velocity = get_nice("S")+abs(water_velocity)
     river_width = ferry_velocity*get_nice("S")
 
     filled_in_question = question_base.format(river_width, ferry_velocity, abs(water_velocity), "up" if water_velocity>0 else "down")
@@ -83,7 +83,7 @@ def generate_straight_boat_q() -> dict:
 
     resultant_velocity_base = "The resultant velocity of the ferry is ${0}\\,\\mathrm{{m s^{{-1}}}}$ E"
     resultant_velocity_magnitude = answer_data["resultant_velocity_magnitude"]
-    filled_in_resultant_velocity = resultant_velocity_base.format(abs(resultant_velocity_magnitude))
+    filled_in_resultant_velocity = resultant_velocity_base.format(round(abs(resultant_velocity_magnitude),2))
 
     required_angle_base = "The required angle for the ferry to travel at is {0}{1}E"
     required_angle = answer_data["required_angle"]
@@ -95,11 +95,11 @@ def generate_straight_boat_q() -> dict:
         first_dir = "N"
     from_ns = 90 - required_angle
 
-    filled_in_required_angle = required_angle_base.format(first_dir, from_ns)
+    filled_in_required_angle = required_angle_base.format(first_dir, round(from_ns,2))
 
     time_taken_base = "The time taken for the ferry to cross the river is {0} seconds"
     time_taken = answer_data["time_taken"]
-    filled_in_time_taken = time_taken_base.format(time_taken)
+    filled_in_time_taken = time_taken_base.format(round(time_taken, 2))
 
     marks = 3
     mark_distribution = [1, 1, 1]
@@ -129,9 +129,14 @@ def generate_straight_boat_tikz(diagram_data: dict):
     return ""
 
 def solve_straight_boat(river_width, water_velocity, ferry_velocity)->dict:
-    resultant_velocity_magnitude=10
-    required_angle=0
+    resultant_velocity_magnitude=math.sqrt(ferry_velocity**2-water_velocity**2)
     time_taken=river_width/resultant_velocity_magnitude
+    
+    if water_velocity>0:
+        required_angle = math.degrees(math.atan(water_velocity/ferry_velocity))
+    else:
+        required_angle = -1 * math.degrees(math.atan(abs(water_velocity)/ferry_velocity))
+
     return{
         "resultant_velocity_magnitude": resultant_velocity_magnitude,
         "required_angle": required_angle,

@@ -6,6 +6,8 @@ First project for Horizons Hack Club.
 
 ## Progress
 
+TODO: make the class document store one document and change the title and path when saving depending on a boolean argument
+
 Working on river problems relative motion kinematics you can see in `dev\questions\kinematics\river_exam.pdf`. No diagram yet.
 
 Still experimenting. Sample dynamics exercise questions in `dev\questions\dynamics\block_exam.pdf`, answers in `dev\questions\dynamics\block_exam_answers.pdf`  
