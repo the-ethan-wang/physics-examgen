@@ -18,3 +18,4 @@ Still experimenting. Sample dynamics exercise questions in `dev\questions\dynami
 - [latex exam document class](https://math.mit.edu/~psh/exam/examdoc.pdf)
 - [math examgen](https://github.com/thearn/examgen)
 - [overleaf](https://www.overleaf.com/)
+- [lol this looks like latex](https://fhsfizzix.weebly.com/uploads/1/1/7/7/117767332/inclinedplanesworksheet.pdf)
